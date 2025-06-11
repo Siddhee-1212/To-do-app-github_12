@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do Application</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: #2A1464;
+            font-family: 'Poppins',sans-serif;
+            color: white;
+        }
+
+        .heading{
+            text-align: center;
+            color: white;
+            font-size: 60px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .add-task-container{
+            background-color:#2A1464 ;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .task-input{
+            font-size: 22px;
+            margin: 0 10px;
+
+        }
+
+        .priority-select{
+            font-size: 22pxpx;
+            margin: 0 10px;
+        }
+
+        .btn-add{
+            font-size: 22pxpx;
+            background-color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+
+        }
+        @media (max-width: 760px) {
+            .add-task-container{
+                padding: 20px;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+          .task-input{
+            font-size: 15px;
+            margin-bottom: 20px;
+            width: 300px;
+          }
+
+          .btn-add{
+            font-size: 15px;
+            padding: 5px 10px ;
+            margin-bottom: 20px;
+            width: 300px;
+          }
+          .priority-select{
+            font-size: 15px;
+            margin-bottom: 20px;
+            width: 300px;
+            padding: 2px 4px;
+          }
+        }
+
+        .task-card {
+            border: 2px solid rgb(198, 186, 186);
+            margin: 10px;
+            padding: 10px;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: #f7f7f7;
+        }
+        .task-card-title {
+            font-size: 20px;
+            margin: 0;
+
+        }
+
+        .task-card-priority {
+            position: absolute;
+            right: 40px;
+            top: 10px;
+            background-color: #9890ad;
+            width: 80px;
+            text-align: center;
+            border-radius: 20px;
+        }
+
+        .bin-icon{
+            height: 20px;
+            position: absolute;
+            right: 10px;
+            top:10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="heading">Todo App</h1>
+    <div class="todo-list" id="todo-list"></div>
+
+    <div class="add-task-container">
+    <input type="text" id="task" class="task-input"/>
+
+    <select id="priority" class="priority-select">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+
+    <button onclick="addTask()" class="btn-add">Add Task</button>
+</div> 
+
+<script>
+    let tasks = [];
+
+    function addTask(){
+        const inputTaskElement = document.getElementById('task');
+        const inputPriorityElement = document.getElementById('priority');
+
+        const newTask ={
+            task: inputTaskElement.value,
+            priority: inputPriorityElement.value || 'medium',
+        };
+
+        tasks.unshift(newTask);
+
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        renderTodoList(tasks);
+        }
+
+        const savedTasks = localStorage.getItem("tasks");
+
+        if(savedTasks) {
+            tasks = JSON.parse(savedTasks);
+        }
+
+        function renderTodoList(taskList){
+        const todoListElement = document.getElementById("todo-list");
+        todoListElement.innerHTML = "";
+        taskList.forEach((taskObj, index) => {
+        const taskCard = document.createElement('div');
+        taskCard.className = 'task-card';
+        taskCard.innerHTML = `
+            <h3 class="task-card-title">${taskObj.task}</h3>
+            <span class="task-card-priority">${taskObj.priority}</span>
+            <img src="delete.png" onclick="removeTask(${index})" class="bin-icon"/>
+        `;
+        todoListElement.appendChild(taskCard);
+        });
+    }
+
+    function removeTask(taskIndex){
+    console.log('Removing task at index:', taskIndex);
+    tasks.splice(taskIndex, 1);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    renderTodoList(tasks);
+    }
+        renderTodoList(tasks);
+</script>
+</body>
+</html>
